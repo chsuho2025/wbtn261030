@@ -1,38 +1,24 @@
-# wbtn261030
+# 최수호 · AI Animator 포트폴리오
 
-네이버웹툰 AI Animator 지원용 포트폴리오 템플릿입니다.
-기존 포트폴리오의 카드 모션과 상세창을 유지하고, 시작 로고 모션과 세 프로젝트의 실제 내용을 비웠습니다.
+네이버웹툰 AI Animator 지원용 포트폴리오입니다.
 
-## 내용 채우기
+## 프로젝트
 
-`assets/js/data.js`의 `projects` 배열에 프로젝트 세 개가 있습니다.
+1. 맹종 — 개인 제작 AI 애니메이션. 첫 프레임 가공, 동작 지시, 사운드 제작.
+2. 점괘보는 공녀님 — 웹툰 영상화. 첫 프레임 확장, 화자별 합성, 목적별 편집.
+3. 코바바 — 경제 개념을 설명하는 캐릭터 모션그래픽 시리즈.
 
-- `title`, `subtitle`: 제목과 부제
-- `summary`, `competency`, `tags`: 목록 카드의 설명과 역량
-- `card.src`: 카드 이미지 경로
-- `resume`: 프로젝트 개요와 담당 역할
-- `outcome.body`, `outcome.media`: 결과물 설명과 이미지·영상·오디오
-- `sections`: 상세 제작 과정
+메인 카드와 상세창에서 완성 영상을 먼저 보여주고, 선별한 제작 사례와 비교 자료를 배치했습니다. CJ 시작 로고 모션은 사용하지 않습니다.
 
-빈 문자열과 빈 배열은 실제 내용이 없는 상태입니다. `assets/media/placeholder.svg`는 빈 카드용 중립 이미지이며, 실제 작업물로 교체하면 됩니다.
+## 편집
 
-`slug`는 상세페이지 주소와 연결됩니다. 변경할 경우 `projects/` 안 HTML의 파일명과 `data-project` 값도 함께 변경하세요.
+- 문구·영상·미디어·섹션: `assets/js/data.js`
+- 화면 구성과 재생 제어: `assets/js/app.js`
+- 카드 모션: `assets/js/wave-gallery.js`
+- 디자인: `assets/css/style.css`
+- 각 프로젝트 직접 주소: `projects/project-01.html`부터 `project-03.html`
 
-## 구조
-
-```text
-index.html
-projects/project-01.html
-projects/project-02.html
-projects/project-03.html
-assets/js/data.js
-assets/js/app.js
-assets/js/wave-gallery.js
-assets/js/glass-controls.js
-assets/css/style.css
-assets/media/placeholder.svg
-vercel.json
-```
+완성 영상은 YouTube 임베드와 원본 링크로 제공하며, 선별한 이미지·짧은 클립·음향 소스는 `assets/media/`에 저장합니다. 원본 제작 문서와 계정·인증 정보는 포함하지 않습니다.
 
 ## 실행과 배포
 
@@ -42,4 +28,4 @@ vercel.json
 python3 -m http.server 8000
 ```
 
-Vercel은 저장소 루트를 사용하며 Framework Preset은 Other, 별도 Build Command와 Output Directory는 필요하지 않습니다. GitHub 기본 브랜치 업데이트를 통해 연결된 Vercel 프로젝트에서 자동 배포됩니다.
+GitHub 기본 브랜치 업데이트를 통해 연결된 Vercel 프로젝트에서 자동 배포됩니다.
