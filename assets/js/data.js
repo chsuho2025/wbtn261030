@@ -1,7 +1,7 @@
 /* 최종 지원서와 실제 제작 자료를 바탕으로 구성한 포트폴리오 */
 window.PORTFOLIO = {
   "site": {
-    "name": "SOOHO CHOI",
+    "name": "최수호",
     "subtitle": "AI Animator Portfolio",
     "intro": "",
     "showIntro": false,
@@ -10,7 +10,8 @@ window.PORTFOLIO = {
       "email": null,
       "phone": null,
       "links": []
-    }
+    },
+    "title": "최수호 | AI Animator 포트폴리오"
   },
   "motion": {
     "enabled": true,
@@ -109,7 +110,7 @@ window.PORTFOLIO = {
             {
               "heading": "모션 가이드 시험과 최종 입력 조정",
               "body": [
-                "말로 전달하기 어려운 경로와 접촉 시점은 Blender의 단순 도형으로도 표현했습니다. 다만 이 컷에서는 가이드 도형이 결과에 섞여, 최종 생성은 가이드를 제외한 Kling 2.6의 첫 프레임·텍스트 방식으로 진행했습니다.",
+                "Blender의 단순 도형으로 이동 경로와 반동을 검토하고, 그 과정에서 정한 조건을 텍스트 지시에 반영했습니다. 다만 가이드 도형이 결과에 섞이는 문제가 있어, 최종 컷은 가이드를 제외한 Kling 2.6의 첫 프레임·텍스트 방식으로 생성했습니다.",
                 "막대기의 길이와 두께를 유지하고 한 번 타격한 뒤 멈추도록 지시했습니다. 그릇은 접촉 전후에도 흔들리지 않도록 했으며, 검수 후 해당 결과를 최종 소스로 선택했습니다."
               ],
               "media": [
@@ -118,14 +119,18 @@ window.PORTFOLIO = {
                   "src": "assets/media/maengjong/striking-guide.mp4",
                   "aspect": "9/16",
                   "alt": "Blender 모션 가이드 · 경로와 반동 검토용",
-                  "caption": "Blender 모션 가이드 · 경로와 반동 검토용"
+                  "caption": "Blender 모션 가이드 · 경로와 반동 검토용",
+                  "preview": true,
+                  "poster": "assets/media/maengjong/striking-guide-poster.jpg"
                 },
                 {
                   "type": "video",
                   "src": "assets/media/maengjong/striking-final.mp4",
                   "aspect": "9/16",
                   "alt": "최종 채택한 I2V 영상 · 가이드 제외 후 생성",
-                  "caption": "최종 채택한 I2V 영상 · 가이드 제외 후 생성"
+                  "caption": "최종 채택한 I2V 영상 · 가이드 제외 후 생성",
+                  "preview": true,
+                  "poster": "assets/media/maengjong/striking-final-poster.jpg"
                 }
               ]
             }
@@ -166,7 +171,8 @@ window.PORTFOLIO = {
           "parts": [
             {
               "body": [
-                "짧은 대사의 첫 음절이나 끝음이 잘릴 때는 본 대사 앞뒤에 감정과 호흡을 유도하는 문장을 넣었습니다. 생성한 음성에서 실제 사용할 대사를 분리하고, 최종 편집에서는 연기와 호흡을 직접 들으며 구간을 정했습니다. 아래 음성은 앞뒤 문맥을 포함해 생성한 소스입니다."
+                "짧은 대사의 첫 음절이나 끝음이 잘릴 때는 본 대사 앞뒤에 감정과 호흡을 유도하는 문장을 넣었습니다. 생성한 음성에서 실제 사용할 대사를 분리하고, 최종 편집에서는 연기와 호흡을 직접 들으며 구간을 정했습니다.",
+                "아래 화림 음성의 본 대사는 ‘엄마, 언제 와?’입니다. 생성할 때는 ‘엄마, 듣고 있어? 엄마, 언제 와? 빨리 왔으면 좋겠어.’로 앞뒤 문장을 더하고, 가볍게 투정하며 기다리는 감정을 지시했습니다. 음성은 앞뒤 문맥을 포함한 생성 소스이며, 완성 영상에서는 본 대사 구간을 편집해 사용했습니다."
               ],
               "audioItems": [
                 {
@@ -187,11 +193,11 @@ window.PORTFOLIO = {
                   "desc": "의식의 절정에 사용하는 음악. 문이 열리는 소리는 별도로 배치했습니다.",
                   "audio": "assets/media/maengjong/BGM-06D_FINAL.m4a"
                 }
-              ]
+              ],
+              "heading": "앞뒤 문장을 더해 짧은 대사의 잘림 보완"
             }
           ],
-          "collapsible": true,
-          "toggleLabel": "대사·음악 소스 듣기"
+          "collapsible": false
         }
       ]
     },
@@ -361,9 +367,9 @@ window.PORTFOLIO = {
       "articleLabel": "개인 프로젝트 · 유튜브 채널 《코바바의 경제학》",
       "card": {
         "type": "image",
-        "src": "assets/media/cobava/cover.jpg",
+        "src": "assets/media/cobava/cover-character.jpg",
         "poster": null,
-        "alt": "코바바의 경제학 · 캐릭터와 경제 소재를 활용한 영상 시리즈",
+        "alt": "코바바 · 글자 없이 캐릭터를 중심으로 구성한 실제 영상 장면",
         "position": "50% 50%"
       },
       "resume": [
@@ -382,7 +388,7 @@ window.PORTFOLIO = {
         {
           "heading": "제작 도구와 방식",
           "body": [
-            "Codex로 자료와 대본을 정리하고, ElevenLabs로 내레이션을 생성합니다. 확정한 음성과 시간 정보를 Claude에 전달해 모션그래픽을 제작한 뒤, 장면의 동작과 연결을 검토해 수정합니다."
+            "Codex로 자료와 대본을 정리하고, ElevenLabs로 내레이션을 생성합니다. 확정한 음성과 시간 정보를 Claude에 전달해 HTML·SVG·JavaScript 기반 모션그래픽 소스를 만들고, 브라우저에서 렌더링해 영상으로 출력합니다. 장면의 동작과 연결을 검토한 뒤 수정합니다."
           ]
         }
       ],
@@ -424,6 +430,24 @@ window.PORTFOLIO = {
               "body": [
                 "코바바는 기본 외형을 유지한 채 몸 전체로 감정을 표현하도록 했습니다. 몸의 눌림과 늘어남, 모자가 뒤따라 움직이는 시간차처럼 애니메이션의 특성을 활용하되, 손이나 입 등 기존에 없던 부속이 생기지 않도록 기준을 정했습니다.",
                 "물건을 주고받는 장면에서는 출발점과 도착점, 주고받는 방향을 확인합니다. 확대와 화면 전환에서도 인물의 크기와 시선, 앞뒤 관계가 이어지는지 검토하고, 캐릭터가 겹치거나 이전 장면이 비치는 부분은 수정합니다."
+              ]
+            },
+            {
+              "media": [
+                {
+                  "type": "image",
+                  "src": "assets/media/cobava/scene-035.jpg",
+                  "aspect": "16/9",
+                  "alt": "코바바와 은행을 크게 배치한 실제 완성 영상 장면",
+                  "caption": "완성 영상 00:35 · 설명하는 인물과 공간을 크게 배치"
+                },
+                {
+                  "type": "image",
+                  "src": "assets/media/cobava/scene-150.jpg",
+                  "aspect": "16/9",
+                  "alt": "은행 앞에 인물들이 대기하는 실제 완성 영상 장면",
+                  "caption": "완성 영상 02:30 · 인물의 크기와 앞뒤 관계를 확인한 장면"
+                }
               ]
             }
           ]

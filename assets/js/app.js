@@ -8,6 +8,7 @@
   const DATA = window.PORTFOLIO;
   const ROOT = window.SITE_ROOT || "./";
   const SITE = DATA.site;
+  const BASE_TITLE = SITE.title || "최수호 | AI Animator 포트폴리오";
   const MOTION = DATA.motion || {};
   const SHOW_PH = !!SITE.showPlaceholders;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -53,12 +54,12 @@
     let inner = "";
     if (m.type === "video") {
       const poster = filled(m.poster) ? ` poster="${esc(src(m.poster))}"` : "";
-      const preload = opts.hero && !filled(m.poster) ? "metadata" : "none";
-      inner = `<video controls playsinline preload="${preload}"${poster} aria-label="${alt}"><source src="${esc(src(m.src))}"></video>`;
+      const preview = m.preview ? ` muted loop data-motion-preview${reduceMotion.matches ? "" : " autoplay"}` : "";
+      inner = `<video controls playsinline preload="metadata"${preview}${poster} aria-label="${alt}"><source src="${esc(src(m.src))}"></video>`;
     } else if (m.type === "embed") {
-      inner = `<iframe src="${esc(m.src)}" title="${alt || "영상"}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen></iframe>`;
+      inner = `<iframe src="${esc(m.src)}" title="${alt || "영상"}" loading="lazy" allow="autoplay; fullscreen; picture-in-picture; encrypted-media"></iframe>`;
     } else if (m.type === "audio") {
-      return `<figure class="audio-sample"><audio class="audio" controls preload="none" src="${esc(src(m.src))}" aria-label="${alt}"></audio>${m.caption ? `<figcaption>${esc(m.caption)}</figcaption>` : ''}</figure>`;
+      return `<figure class="audio-sample"><audio class="audio" controls preload="metadata" src="${esc(src(m.src))}" aria-label="${alt}"></audio>${m.caption ? `<figcaption>${esc(m.caption)}</figcaption>` : ''}</figure>`;
     } else {
       inner = `<img src="${esc(src(m.src))}" alt="${alt}" loading="${opts.hero ? "eager" : "lazy"}" decoding="async">`;
     }
@@ -140,7 +141,7 @@
         const heading = part.heading ? `<h3>${text(part.heading)}</h3>` : '';
         const prose = part.body ? `<div class="prose">${paragraphs(part.body)}</div>` : '';
         const steps = part.steps ? `<ol class="article-steps">${part.steps.map((step,i)=>`<li><h4><span>${String(i+1).padStart(2,'0')}</span>${text(step.title)}</h4>${paragraphs(step.body || [step.desc])}${step.output ? `<p class="article-step-output">${text(step.output)}</p>` : ''}</li>`).join('')}</ol>` : '';
-        const mediaItems = part.media ? `<div class="article-media${part.media.length>1 ? ' article-media--pair' : ''}">${part.media.map(m=>media(m)).join('')}</div>` : '';
+        const mediaItems = part.media ? `<div class="article-media${part.media.length>1 ? ' article-media--pair' : ''}${part.media.some(m=>m.preview) ? ' article-media--motion-pair' : ''}">${part.media.map(m=>media(m)).join('')}</div>` : '';
         const table = part.table ? renderers.matrix({...part.table,heading:part.heading || sec.heading}) : '';
         const comparison = part.compare ? `<div class="article-comparison">${compare(part.compare)}</div>` : '';
         const audio = part.audioItems ? renderers.layers({items:part.audioItems}) : '';
@@ -245,7 +246,7 @@
             ? `<span class="ph-text">담당 범위 미정</span>`
             : "";
           const audio = l.audio && filled(l.audio.src || l.audio)
-            ? `<audio class="audio" controls preload="none" src="${esc(src(l.audio.src || l.audio))}" aria-label="${esc(l.role)} 샘플"></audio>`
+            ? `<audio class="audio" controls preload="metadata" src="${esc(src(l.audio.src || l.audio))}" aria-label="${esc(l.role)} 샘플"></audio>`
             : SHOW_PH
             ? `<span class="ph-text">${esc(l.role)} 샘플 오디오</span>`
             : "";
@@ -292,7 +293,7 @@
       const poster = filled(m.poster) ? ` poster="${esc(src(m.poster))}"` : "";
       const tag =
         cmp.type === "audio"
-          ? `<audio class="audio" controls preload="none" src="${esc(src(m.src))}" data-ab aria-label="${name}"></audio>`
+          ? `<audio class="audio" controls preload="metadata" src="${esc(src(m.src))}" data-ab aria-label="${name}"></audio>`
           : `<div class="media" style="--ar:${r.css};--arn:${r.num}"><div class="media__box"><video controls playsinline preload="none"${poster} data-ab aria-label="${name}"><source src="${esc(src(m.src))}"></video></div></div>`;
       return `<div><p class="pair__label">${name}</p>${tag}</div>`;
     };
@@ -390,6 +391,33 @@
   // 공간형 갤러리: 전체 시점 이동 + 카드별 깊이·빛·이미지 패럴랙스.
   function tilt(root) { window.initWaveGallery?.(root, MOTION); }
 
+  // Short, silent comparisons play only while visible. Posters remain available when playback is blocked.
+  let previewObserver = null;
+  function motionPreviews(root = document) {
+    previewObserver?.disconnect();
+    previewObserver = null;
+    const videos = [...root.querySelectorAll('video[data-motion-preview]')];
+    if (!videos.length) return;
+    videos.forEach(video => {
+      video.muted = true;
+      video.autoplay = !reduceMotion.matches;
+    });
+    if (reduceMotion.matches || document.hidden) {
+      videos.forEach(video => video.pause());
+      return;
+    }
+    if (!("IntersectionObserver" in window)) return;
+    previewObserver = new IntersectionObserver(entries => {
+      entries.forEach(({ target, isIntersecting }) => {
+        if (isIntersecting && !document.hidden && !reduceMotion.matches) target.play().catch(() => {});
+        else target.pause();
+      });
+    }, { threshold: 0.2 });
+    videos.forEach(video => previewObserver.observe(video));
+  }
+  document.addEventListener('visibilitychange', () => motionPreviews(document));
+  reduceMotion.addEventListener('change', () => motionPreviews(document));
+
   /* ───────── pages ───────── */
   function mountChrome(page) {
     const h = document.getElementById("site-header");
@@ -468,7 +496,7 @@
       dialog.showModal(); scroll.scrollTop = 0;
       window.initGlassControls?.(dialog);
       document.dispatchEvent(new CustomEvent('portfolio:modal', {detail: {open: true}}));
-      document.title = `${p.title} | 최수호`;
+      document.title = `${p.title} | ${BASE_TITLE}`;
       const d = duration();
       running = dialog.animate([
         { transform: geometry(), borderRadius: '50%', opacity: .9 },
@@ -483,11 +511,14 @@
         dialog.querySelector('.project__title').focus({preventScroll:true});
       }).catch(() => {});
       sliders();
+      motionPreviews(dialog);
     }
     async function closeProject() {
       if (!dialog.open || closing) return;
       closing = true; opening = false; running?.cancel(); expansionMotion?.cancel();
       scroll.querySelectorAll('audio,video').forEach(el => el.pause());
+      previewObserver?.disconnect();
+      previewObserver = null;
       // Removing embedded players also stops playback in cross-origin frames.
       scroll.querySelectorAll('iframe').forEach(el => el.remove());
       dialog.classList.remove('is-revealed');
@@ -502,7 +533,7 @@
       cover.getAnimations().forEach(a => a.cancel());
       document.body.classList.remove('project-is-open');
       document.dispatchEvent(new CustomEvent('portfolio:modal', {detail:{open:false}}));
-      document.title = '최수호 - AI Animator 지원자';
+      document.title = BASE_TITLE;
       trigger?.focus({preventScroll:true});
     }
     document.querySelector('.gallery').addEventListener('click', e => {
@@ -555,7 +586,7 @@
       main.innerHTML = `<div class="project"><p class="project__missing">이 작업을 찾을 수 없습니다. <a href="${homeHref()}">전체 작업 보기</a></p></div>`;
       return;
     }
-    document.title = `${p.title} | ${SITE.name}`;
+    document.title = `${p.title} | ${BASE_TITLE}`;
     const others = DATA.projects.filter((o) => o.slug !== slug);
     main.innerHTML = `${projectArticle(p)}
       <nav class="more" aria-labelledby="more-title">
@@ -568,6 +599,7 @@
 
     sliders();
     exclusivePlayback();
+    motionPreviews(main);
     window.initGlassControls?.(document);
   }
 

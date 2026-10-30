@@ -641,3 +641,24 @@ button { font: inherit; }
 .project-summary { min-height:260px; }
 .article-toc:has(ol:empty) { display:none; }
 .card__summary:empty, .card__competency:empty { display:none; }
+
+/* Keep the two motion examples compact and visible before playback. */
+.article-media--motion-pair {
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  align-items:start;
+  gap:20px;
+}
+.article-media--motion-pair > .media { width:min(100%,260px); margin:0 auto; }
+.article-media--motion-pair > figure + figure { border:0; padding:0; }
+.article-media--motion-pair .media__box { border-radius:14px; background:#111; }
+.article-media--motion-pair figcaption { line-height:1.6; }
+
+/* Clip the padded GPU surface at its mobile card boundary. */
+@media(max-width:720px) {
+  body[data-page="home"] { overflow-x:hidden; }
+  .home { min-width:0; overflow-x:clip; }
+  .gallery, .card-item, .card { min-width:0; max-width:100%; }
+  .gallery .card__frame.liquid-ready { overflow:hidden; border-radius:50%; contain:paint; }
+  .article-media--motion-pair { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  .article-media--motion-pair > figure + figure { border:0; padding:0; }
+}
