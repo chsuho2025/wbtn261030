@@ -648,7 +648,7 @@ button { font: inherit; }
   align-items:start;
   gap:20px;
 }
-.article-media--motion-pair > .media { width:min(100%,260px); margin:0 auto; }
+.article-media--motion-pair > .media { width:100%; margin:0 auto; }
 .article-media--motion-pair > figure + figure { border:0; padding:0; }
 .article-media--motion-pair .media__box { border-radius:14px; background:#111; }
 .article-media--motion-pair figcaption { line-height:1.6; }
@@ -659,6 +659,19 @@ button { font: inherit; }
   .home { min-width:0; overflow-x:clip; }
   .gallery, .card-item, .card { min-width:0; max-width:100%; }
   .gallery .card__frame.liquid-ready { overflow:hidden; border-radius:50%; contain:paint; }
-  .article-media--motion-pair { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  .article-media--motion-pair { grid-template-columns:minmax(0,1fr); gap:24px; }
   .article-media--motion-pair > figure + figure { border:0; padding:0; }
 }
+
+/* Code excerpts stay inside the article width on narrow screens. */
+.article-part, .block__body { min-width:0; }
+.code-sample { margin:28px 0 36px; max-width:100%; min-width:0; }
+.code-sample > figcaption { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px 20px; padding:12px 16px; border:1px solid #dce0e5; border-bottom:0; border-radius:10px 10px 0 0; background:#f2f4f7; font-size:12px; line-height:1.6; }
+.code-sample > figcaption strong { color:#263449; font-weight:600; }
+.code-sample > figcaption span { color:#657083; overflow-wrap:anywhere; }
+.code-sample pre { margin:0; padding:20px; width:100%; max-width:100%; box-sizing:border-box; overflow-x:auto; border-radius:0 0 10px 10px; background:#172235; color:#e5edf8; tab-size:2; line-height:1.8; font-size:12px; overscroll-behavior-x:contain; }
+.code-sample code { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; white-space:pre; }
+.code-sample__note { color:#657083; font-size:12px; line-height:1.75; margin:10px 0 0; }
+.gallery .card__title, .more .card__title { word-break:keep-all; }
+.media--embed .media__box { background:#111; }
+@media(max-width:720px) { .code-sample pre { padding:16px; font-size:11px; } }

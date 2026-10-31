@@ -47,7 +47,7 @@
   // 상세 페이지용: 원본 비율 유지, 잘림·늘림 없음
   function media(m, opts = {}) {
     if (!m || !filled(m.src)) return placeholderBox(m && m.label, m && m.aspect);
-    const r = ratio(opts.landscape ? "16/9" : m.aspect);
+    const r = ratio(opts.landscape || m.type === "video" || m.type === "embed" ? "16/9" : m.aspect);
     const portrait = r.num < 1 ? " media--portrait" : "";
     const style = `--ar:${r.css};--arn:${r.num}`;
     const alt = esc(m.alt || "");
@@ -64,8 +64,7 @@
       inner = `<img src="${esc(src(m.src))}" alt="${alt}" loading="${opts.hero ? "eager" : "lazy"}" decoding="async">`;
     }
     const yt = m.type === "embed" && m.src.match(/youtube(?:-nocookie)?\.com\/embed\/([\w-]+)/);
-    const fallback = yt ? `<a class="media__external" href="https://www.youtube.com/watch?v=${yt[1]}" target="_blank" rel="noopener">YouTube에서 보기${NEW_TAB}</a>` : "";
-    const caption = filled(m.caption) || fallback ? `<figcaption>${filled(m.caption) ? esc(m.caption) : ""}${fallback}</figcaption>` : "";
+    const caption = filled(m.caption) ? `<figcaption>${esc(m.caption)}</figcaption>` : "";
     return `<figure class="media${portrait}${yt ? " media--embed" : ""}" style="${style}"><div class="media__box">${inner}</div>${caption}</figure>`;
   }
 
@@ -116,7 +115,6 @@
           <div class="card__caption">
             ${mini ? "" : `<span class="card__number">${String(i + 1).padStart(2, "0")}</span>`}
             <span class="card__title">${cardTitle}</span>
-            ${p.tags?.length ? `<span class="card__tags" aria-label="핵심 역량">${p.tags.map(tag=>`<span>#${esc(tag)}</span>`).join('')}</span>` : ""}
             <span class="card__summary">${esc(p.summary)}</span>
             ${mini ? "" : `<span class="card__competency"><span class="sr-only">핵심 역량: </span>${esc(p.competency)}</span>`}
 
@@ -147,7 +145,8 @@
         const audio = part.audioItems ? renderers.layers({items:part.audioItems}) : '';
         const bullets = part.bullets ? `<ul class="article-list">${part.bullets.map(item=>`<li>${text(item)}</li>`).join('')}</ul>` : '';
         const note = part.note ? `<aside class="article-note">${part.note.label ? `<h4>${text(part.note.label)}</h4>` : ''}${paragraphs(part.note.body)}</aside>` : '';
-        return `<div class="article-part">${heading}${prose}${steps}${mediaItems}${table}${comparison}${audio}${bullets}${note}</div>`;
+        const code = (part.codeBlocks || []).map(block => `<figure class="code-sample"><figcaption><strong>${esc(block.title || block.language || '코드')}</strong>${block.source ? `<span>${esc(block.source)}</span>` : ''}</figcaption><pre tabindex="0" aria-label="${esc(block.title || '코드 발췌')}"><code>${esc(block.content)}</code></pre>${block.note ? `<p class="code-sample__note">${esc(block.note)}</p>` : ''}</figure>`).join('');
+        return `<div class="article-part">${heading}${prose}${steps}${mediaItems}${table}${comparison}${audio}${bullets}${code}${note}</div>`;
       }).join('');
     },
     "live-demo"(s) {
@@ -262,13 +261,13 @@
     },
   };
 
-  // 전후 비교: image → 슬라이더, video/audio → 나란히 + 같은 지점 전환
+  // 전후 비교: image → 슬라이더, video/audio → 나란히 재생
   function compare(cmp) {
     if (!cmp) return "";
     const { before = {}, after = {} } = cmp;
     const nameA = esc(before.name || "수정 전");
     const nameB = esc(after.name || "수정 후");
-    const r = ratio(cmp.aspect);
+    const r = ratio(cmp.type === "video" ? "16/9" : cmp.aspect);
 
     if (cmp.type === "image") {
       if (!filled(before.src) || !filled(after.src)) {
@@ -294,7 +293,7 @@
       const tag =
         cmp.type === "audio"
           ? `<audio class="audio" controls preload="metadata" src="${esc(src(m.src))}" data-ab aria-label="${name}"></audio>`
-          : `<div class="media" style="--ar:${r.css};--arn:${r.num}"><div class="media__box"><video controls playsinline preload="none"${poster} data-ab aria-label="${name}"><source src="${esc(src(m.src))}"></video></div></div>`;
+          : `<div class="media" style="--ar:${r.css};--arn:${r.num}"><div class="media__box"><video controls playsinline preload="metadata"${poster} data-ab aria-label="${name}"><source src="${esc(src(m.src))}"></video></div></div>`;
       return `<div><p class="pair__label">${name}</p>${tag}</div>`;
     };
 
@@ -303,7 +302,6 @@
     return `
       <div class="ab" data-ab-group>
         <div class="pair${cmp.type === "audio" ? " pair--audio" : ""}">${el(before, nameA)}${el(after, nameB)}</div>
-        ${both ? `<button class="btn btn--quiet ab__switch" type="button">같은 지점에서 바꿔 듣기</button>` : ""}
       </div>`;
   }
 
@@ -339,24 +337,7 @@
       true
     );
 
-    document.addEventListener("click", (e) => {
-      const btn = e.target.closest(".ab__switch");
-      if (!btn) return;
-      const group = btn.closest("[data-ab-group]");
-      const els = [...group.querySelectorAll("[data-ab]")];
-      if (els.length < 2) return;
-      const cur = Number(group.dataset.last ?? -1);
-      const from = els[cur] || null;
-      const to = els[cur === 0 ? 1 : 0];
-      const t = from ? from.currentTime : 0;
-      if (from) from.pause();
-      const go = () => {
-        try { to.currentTime = Math.min(t, to.duration || t); } catch (_) {}
-        to.play();
-      };
-      if (to.readyState >= 1) go();
-      else { to.preload = "metadata"; to.addEventListener("loadedmetadata", go, { once: true }); to.load(); }
-    });
+
   }
 
   function sliders() {
@@ -440,7 +421,7 @@
   function projectArticle(p) {
     const outcome=p.outcome || {};
     const resume=(p.resume || []).map(item=>`<div class="resume-item"><h3>${esc(item.heading)}</h3>${paragraphs(item.body)}</div>`).join('');
-    const action=outcome.action ? `<a class="btn result-action" href="${esc(outcome.action.url)}" target="_blank" rel="noopener">${esc(outcome.action.label)}${ICON_ARROW}${NEW_TAB}</a>` : '';
+    const action = '';
     const chapters=(p.sections || []).filter(visible);
     return `      <article class="project project--blog">
         <div class="project-lead-media" aria-label="프로젝트 결과물 영상">${(outcome.media || []).map(m=>media(m,{hero:true,landscape:true})).join('')}</div>
